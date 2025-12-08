@@ -1,0 +1,8 @@
+﻿# Mobile specific
+node_modules
+dist/
+*.log
+.vercel
+.netlify
+deploy-website.bat
+.github/workflows/website.yml
