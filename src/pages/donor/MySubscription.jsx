@@ -24,13 +24,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { collection, query, where, limit, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  limit,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 const MySubscription = () => {
   const { currentUser } = useAuth();
   const { toast } = useToast();
-  const [subscription, setSubscription] = useState<any>(null);
+  const [subscription, setSubscription] = useState < any > null;
   const [loading, setLoading] = useState(true);
   const [newAmount, setNewAmount] = useState("");
   const [updating, setUpdating] = useState(false);
@@ -45,22 +51,26 @@ const MySubscription = () => {
       limit(1)
     );
 
-    const unsubscribe = onSnapshot(subscriptionQuery, (snapshot) => {
-      if (!snapshot.empty) {
-        const subData = {
-          id: snapshot.docs[0].id,
-          ...snapshot.docs[0].data()
-        } as any; // Type assertion to handle Firestore data
-        setSubscription(subData);
-        setNewAmount(subData.amount.toString());
-      } else {
-        setSubscription(null);
+    const unsubscribe = onSnapshot(
+      subscriptionQuery,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const subData = {
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data(),
+          };
+          setSubscription(subData);
+          setNewAmount(subData.amount.toString());
+        } else {
+          setSubscription(null);
+        }
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching subscription:", error);
+        setLoading(false);
       }
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching subscription:", error);
-      setLoading(false);
-    });
+    );
 
     // Cleanup listener on unmount
     return () => unsubscribe();
@@ -87,11 +97,13 @@ const MySubscription = () => {
         description: "Your monthly amount has been updated.",
       });
       // No need to fetch - real-time listener will update automatically
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error updating amount:", error);
       toast({
         title: "Error",
-        description: `Failed to update amount: ${error.message || "Unknown error"}`,
+        description: `Failed to update amount: ${
+          error.message || "Unknown error"
+        }`,
         variant: "destructive",
       });
     } finally {
@@ -185,15 +197,21 @@ const MySubscription = () => {
                 <div className="flex items-center justify-between py-3 border-b">
                   <div className="flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-primary" />
-                    <span className="text-sm text-muted-foreground">Monthly Amount</span>
+                    <span className="text-sm text-muted-foreground">
+                      Monthly Amount
+                    </span>
                   </div>
-                  <span className="font-bold text-lg">{subscription.amount} ETB</span>
+                  <span className="font-bold text-lg">
+                    {subscription.amount} ETB
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between py-3 border-b">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-primary" />
-                    <span className="text-sm text-muted-foreground">Start Date</span>
+                    <span className="text-sm text-muted-foreground">
+                      Start Date
+                    </span>
                   </div>
                   <span className="font-semibold">
                     {subscription.startDate?.toDate().toLocaleDateString()}
@@ -202,17 +220,24 @@ const MySubscription = () => {
 
                 <div className="flex items-center justify-between py-3 border-b">
                   <span className="text-sm text-muted-foreground">Status</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${subscription.active
-                    ? "bg-green-100 text-green-800"
-                    : "bg-gray-100 text-gray-800"
-                    }`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      subscription.active
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
                     {subscription.active ? "Active" : "Paused"}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between py-3">
-                  <span className="text-sm text-muted-foreground">Billing Cycle</span>
-                  <span className="font-semibold capitalize">{subscription.billingCycle}</span>
+                  <span className="text-sm text-muted-foreground">
+                    Billing Cycle
+                  </span>
+                  <span className="font-semibold capitalize">
+                    {subscription.billingCycle}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -290,12 +315,16 @@ const MySubscription = () => {
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This will permanently cancel your subscription. You can always create a new one later.
+                          This will permanently cancel your subscription. You
+                          can always create a new one later.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>No, keep it</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleCancel} className="bg-red-600">
+                        <AlertDialogAction
+                          onClick={handleCancel}
+                          className="bg-red-600"
+                        >
                           Yes, cancel
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -309,11 +338,14 @@ const MySubscription = () => {
           <Card>
             <CardContent className="py-12 text-center">
               <DollarSign className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <h3 className="text-xl font-semibold mb-2">No Active Subscription</h3>
+              <h3 className="text-xl font-semibold mb-2">
+                No Active Subscription
+              </h3>
               <p className="text-muted-foreground mb-6">
-                You don't have an active subscription yet. Start making a difference today!
+                You don't have an active subscription yet. Start making a
+                difference today!
               </p>
-              <Button onClick={() => window.location.href = "/causes"}>
+              <Button onClick={() => (window.location.href = "/causes")}>
                 Start Donating
               </Button>
             </CardContent>

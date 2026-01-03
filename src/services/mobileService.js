@@ -9,16 +9,16 @@ import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { Filesystem, Directory } from "@capacitor/filesystem";
 
 export class MobileService {
-  static isNative(): boolean {
+  static isNative() {
     return Capacitor.isNativePlatform();
   }
 
-  static isPlatform(platform: "ios" | "android"): boolean {
+  static isPlatform(platform) {
     return Capacitor.getPlatform() === platform;
   }
 
   // App Lifecycle
-  static async initializeApp(): Promise<void> {
+  static async initializeApp() {
     if (this.isNative()) {
       await SplashScreen.hide();
       await StatusBar.setStyle({ style: Style.Light });
@@ -41,25 +41,20 @@ export class MobileService {
   }
 
   // Haptic Feedback
-  static async hapticImpact(
-    style: ImpactStyle = ImpactStyle.Medium
-  ): Promise<void> {
+  static async hapticImpact(style = ImpactStyle.Medium) {
     if (this.isNative()) {
       await Haptics.impact({ style });
     }
   }
 
-  static async hapticNotification(): Promise<void> {
+  static async hapticNotification() {
     if (this.isNative()) {
       await Haptics.notification();
     }
   }
 
   // Network Status
-  static async getNetworkStatus(): Promise<{
-    connected: boolean;
-    connectionType: string;
-  }> {
+  static async getNetworkStatus() {
     if (this.isNative()) {
       const status = await Network.getStatus();
       return {
@@ -70,9 +65,7 @@ export class MobileService {
     return { connected: navigator.onLine, connectionType: "unknown" };
   }
 
-  static async addNetworkListener(
-    callback: (status: { connected: boolean; connectionType: string }) => void
-  ): Promise<void> {
+  static async addNetworkListener(callback) {
     if (this.isNative()) {
       Network.addListener("networkStatusChange", callback);
     } else {
@@ -86,7 +79,7 @@ export class MobileService {
   }
 
   // Push Notifications
-  static async requestPushNotifications(): Promise<boolean> {
+  static async requestPushNotifications() {
     if (!this.isNative()) return false;
 
     try {
@@ -101,7 +94,7 @@ export class MobileService {
     return false;
   }
 
-  static async addPushNotificationListeners(): Promise<void> {
+  static async addPushNotificationListeners() {
     if (!this.isNative()) return;
 
     PushNotifications.addListener("registration", (token) => {
@@ -131,7 +124,7 @@ export class MobileService {
   }
 
   // Camera
-  static async takePhoto(): Promise<string | null> {
+  static async takePhoto() {
     if (!this.isNative()) return null;
 
     try {
@@ -148,7 +141,7 @@ export class MobileService {
     }
   }
 
-  static async pickImage(): Promise<string | null> {
+  static async pickImage() {
     if (!this.isNative()) return null;
 
     try {
@@ -166,10 +159,7 @@ export class MobileService {
   }
 
   // File System
-  static async saveFile(
-    data: string,
-    filename: string
-  ): Promise<string | null> {
+  static async saveFile(data, filename) {
     if (!this.isNative()) return null;
 
     try {
@@ -185,7 +175,7 @@ export class MobileService {
     }
   }
 
-  static async readFile(filename: string): Promise<string | null> {
+  static async readFile(filename) {
     if (!this.isNative()) return null;
 
     try {
@@ -193,7 +183,7 @@ export class MobileService {
         path: filename,
         directory: Directory.Documents,
       });
-      return result.data as string;
+      return result.data;
     } catch (error) {
       console.error("File read error:", error);
       return null;
@@ -201,7 +191,7 @@ export class MobileService {
   }
 
   // App Info
-  static async getAppInfo(): Promise<{ version: string; build: string }> {
+  static async getAppInfo() {
     if (this.isNative()) {
       const info = await App.getInfo();
       return {

@@ -23,7 +23,7 @@ const Auth = () => {
     password: "",
     confirmPassword: "",
   });
-  const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [passwordErrors, setPasswordErrors] = useState([]);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [phoneData, setPhoneData] = useState({
     phoneNumber: "",
@@ -34,12 +34,10 @@ const Auth = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPhoneVerification, setShowPhoneVerification] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState<any>(null);
+  const [confirmationResult, setConfirmationResult] = useState(null);
 
-  const validatePassword = (
-    password: string
-  ): { errors: string[]; strength: number } => {
-    const errors: string[] = [];
+  const validatePassword = (password) => {
+    const errors = [];
     let strength = 0;
 
     // Length validation
@@ -106,7 +104,7 @@ const Auth = () => {
       } else {
         navigate("/dashboard");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Google sign in error:", error);
       toast({
         title: "Sign In Failed",
@@ -150,7 +148,7 @@ const Auth = () => {
         title: "Code Sent",
         description: "Verification code has been sent to your phone.",
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error("Phone sign in error:", error);
       toast({
         title: "Failed to Send Code",
@@ -176,7 +174,7 @@ const Auth = () => {
       });
 
       navigate("/dashboard");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Verification error:", error);
       toast({
         title: "Verification Failed",
@@ -223,7 +221,7 @@ const Auth = () => {
           navigate(isAdmin ? "/admin" : "/dashboard");
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Sign in error:", error);
       toast({
         title: "Sign In Failed",
@@ -292,7 +290,7 @@ const Auth = () => {
           navigate(isAdmin ? "/admin" : "/dashboard");
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Sign up error:", error);
       toast({
         title: "Sign Up Failed",

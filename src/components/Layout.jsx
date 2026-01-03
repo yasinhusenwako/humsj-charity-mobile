@@ -1,13 +1,8 @@
-import { ReactNode } from "react";
+import React from "react";
 import Navbar from "./Navbar";
 import BottomNav from "./BottomNav";
 
-interface LayoutProps {
-  children: ReactNode;
-  showBottomNav?: boolean;
-}
-
-const Layout = ({ children, showBottomNav = true }: LayoutProps) => {
+const Layout = ({ children, showBottomNav = true }) => {
   return (
     <div className="min-h-screen">
       <Navbar />

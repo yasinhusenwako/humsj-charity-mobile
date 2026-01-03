@@ -27,7 +27,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { createSubscription, getUserSubscription, updateSubscription } from "@/services/subscriptionService";
+import {
+  createSubscription,
+  getUserSubscription,
+  updateSubscription,
+} from "@/services/subscriptionService";
 import {
   Select,
   SelectContent,
@@ -36,28 +40,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface PaymentMethod {
-  id: string;
-  type: "bank" | "mobile" | "card";
-  name: string;
-  details: string;
-  isDefault: boolean;
-}
-
 const DonationMethods = () => {
-
   const { toast } = useToast();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
-  const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [receiptFile, setReceiptFile] = useState(null);
   const [amount, setAmount] = useState("");
   const [transactionRef, setTransactionRef] = useState("");
   const [notes, setNotes] = useState("");
-  const [donationType, setDonationType] = useState<"one-time" | "monthly">("one-time");
+  const [donationType, setDonationType] = useState("one-time");
   const [uploading, setUploading] = useState(false);
-  const [methods] = useState<PaymentMethod[]>([
+  const [methods] = useState([
     {
       id: "1",
       type: "bank",
@@ -74,7 +69,7 @@ const DonationMethods = () => {
     },
   ]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (file.size > 5 * 1024 * 1024) {
@@ -126,7 +121,7 @@ const DonationMethods = () => {
 
         if (existingSubscription) {
           // Update existing subscription
-          await updateSubscription(existingSubscription.id!, {
+          await updateSubscription(existingSubscription.id, {
             amount: parseFloat(amount),
             active: true,
           });
@@ -144,9 +139,10 @@ const DonationMethods = () => {
 
       toast({
         title: "Success!",
-        description: donationType === "monthly"
-          ? "Monthly subscription created! Your donation is being verified."
-          : "Receipt uploaded successfully. Your donation is being verified.",
+        description:
+          donationType === "monthly"
+            ? "Monthly subscription created! Your donation is being verified."
+            : "Receipt uploaded successfully. Your donation is being verified.",
       });
       // Reset form
       setUploadDialogOpen(false);
@@ -168,7 +164,7 @@ const DonationMethods = () => {
     }
   };
 
-  const openUploadDialog = (method: PaymentMethod) => {
+  const openUploadDialog = (method) => {
     setSelectedMethod(method);
     setUploadDialogOpen(true);
   };
@@ -177,10 +173,11 @@ const DonationMethods = () => {
     navigate("/donate");
   };
 
-  const handleCopyDetails = (method: PaymentMethod) => {
-    const textToCopy = method.type === "bank"
-      ? method.details.replace("Account: ", "")
-      : method.details.replace("Phone: ", "");
+  const handleCopyDetails = (method) => {
+    const textToCopy =
+      method.type === "bank"
+        ? method.details.replace("Account: ", "")
+        : method.details.replace("Phone: ", "");
 
     navigator.clipboard.writeText(textToCopy);
     toast({
@@ -255,8 +252,8 @@ const DonationMethods = () => {
                           {method.type === "bank"
                             ? "Bank Transfer"
                             : method.type === "mobile"
-                              ? "Mobile Money"
-                              : "Credit/Debit Card"}
+                            ? "Mobile Money"
+                            : "Credit/Debit Card"}
                         </p>
                       </div>
                     </div>
@@ -281,8 +278,12 @@ const DonationMethods = () => {
           <CardContent className="pt-6 pb-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold mb-1">Already Made a Donation?</h3>
-                <p className="text-sm opacity-90">Upload your payment receipt for verification</p>
+                <h3 className="text-lg font-semibold mb-1">
+                  Already Made a Donation?
+                </h3>
+                <p className="text-sm opacity-90">
+                  Upload your payment receipt for verification
+                </p>
               </div>
               <Button
                 variant="charity"
@@ -302,9 +303,7 @@ const DonationMethods = () => {
         {/* Info Card */}
         <Card className="bg-blue-50 border-blue-200">
           <CardHeader>
-            <CardTitle className="text-blue-900">
-              How to Donate
-            </CardTitle>
+            <CardTitle className="text-blue-900">How to Donate</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-sm text-blue-800">
@@ -313,7 +312,10 @@ const DonationMethods = () => {
               <li>• Use your bank app or mobile money to transfer</li>
               <li>• Bank transfers: 1-2 business days processing</li>
               <li>• Mobile money (Telebirr/E-birr): Instant transfer</li>
-              <li>• After payment, click "Upload Receipt" to submit your donation proof</li>
+              <li>
+                • After payment, click "Upload Receipt" to submit your donation
+                proof
+              </li>
             </ul>
           </CardContent>
         </Card>
@@ -332,7 +334,7 @@ const DonationMethods = () => {
                   className="w-full mt-1 px-3 py-2 border border-input bg-background rounded-md"
                   value={selectedMethod?.id || ""}
                   onChange={(e) => {
-                    const method = methods.find(m => m.id === e.target.value);
+                    const method = methods.find((m) => m.id === e.target.value);
                     setSelectedMethod(method || null);
                   }}
                 >
@@ -346,13 +348,20 @@ const DonationMethods = () => {
               </div>
               <div>
                 <Label htmlFor="donationType">Donation Type *</Label>
-                <Select value={donationType} onValueChange={(value: "one-time" | "monthly") => setDonationType(value)}>
+                <Select
+                  value={donationType}
+                  onValueChange={(value: "one-time" | "monthly") =>
+                    setDonationType(value)
+                  }
+                >
                   <SelectTrigger className="mt-1">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="one-time">One-time Donation</SelectItem>
-                    <SelectItem value="monthly">Monthly Subscription</SelectItem>
+                    <SelectItem value="monthly">
+                      Monthly Subscription
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 {donationType === "monthly" && (

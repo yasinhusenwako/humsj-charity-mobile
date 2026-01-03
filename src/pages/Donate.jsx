@@ -25,7 +25,7 @@ const Donate = () => {
 
   const presetAmounts = [50, 100, 200, 500, 1000, 2000];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!currentUser) {

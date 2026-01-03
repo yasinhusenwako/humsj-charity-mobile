@@ -12,16 +12,8 @@ import groupStudy from "@/assets/group-study.jpg";
 import charityGiving from "@/assets/charity-giving.jpg";
 import quranStudy from "@/assets/quran-study.jpg";
 
-interface GalleryImage {
-  id: string;
-  url: string;
-  title: string;
-  description: string;
-  createdAt: any;
-}
-
 const Gallery = () => {
-  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +26,7 @@ const Gallery = () => {
       const imagesData = imagesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as GalleryImage[];
+      }));
 
       // Sort by creation date (newest first)
       imagesData.sort((a, b) => {

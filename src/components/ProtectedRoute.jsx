@@ -2,14 +2,11 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requireAdmin?: boolean;
-}
-
-const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { currentUser, loading } = useAuth();
-  const { profile, loading: profileLoading } = useUserProfile(currentUser?.uid || null);
+  const { profile, loading: profileLoading } = useUserProfile(
+    currentUser?.uid || null
+  );
 
   // Show loading state while checking authentication
   if (loading || profileLoading) {
@@ -29,8 +26,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
 
   // Check if admin access is required
   if (requireAdmin) {
-    const isAdmin = profile?.role === "admin" || currentUser.email === "admin@humsj.edu.et";
-    
+    const isAdmin =
+      profile?.role === "admin" || currentUser.email === "admin@humsj.edu.et";
+
     if (!isAdmin) {
       return <Navigate to="/" replace />;
     }

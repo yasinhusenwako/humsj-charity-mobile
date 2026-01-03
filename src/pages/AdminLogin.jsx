@@ -18,22 +18,22 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       await login(loginData.email, loginData.password);
-      
+
       // Verify admin role from Firestore
       const user = auth.currentUser;
       if (user) {
         const userRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userRef);
-        
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          
+
           if (userData.role === "admin") {
             toast({
               title: "Welcome Admin!",
@@ -45,7 +45,8 @@ const AdminLogin = () => {
             await auth.signOut();
             toast({
               title: "Access Denied",
-              description: "You don't have admin privileges. Please use the regular login.",
+              description:
+                "You don't have admin privileges. Please use the regular login.",
               variant: "destructive",
             });
           }
@@ -67,7 +68,7 @@ const AdminLogin = () => {
           }
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Admin login error:", error);
       toast({
         title: "Login Failed",
@@ -87,7 +88,9 @@ const AdminLogin = () => {
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary rounded-full mb-4 shadow-lg">
             <Shield className="w-10 h-10 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Admin Portal</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Admin Portal
+          </h1>
           <p className="text-gray-600">HUMSJ Charity Management System</p>
         </div>
 
@@ -108,7 +111,9 @@ const AdminLogin = () => {
                   type="email"
                   required
                   value={loginData.email}
-                  onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                  onChange={(e) =>
+                    setLoginData({ ...loginData, email: e.target.value })
+                  }
                   placeholder="admin@humsj.edu.et"
                   className="mt-2"
                   autoComplete="email"
@@ -123,7 +128,9 @@ const AdminLogin = () => {
                     type={showPassword ? "text" : "password"}
                     required
                     value={loginData.password}
-                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    onChange={(e) =>
+                      setLoginData({ ...loginData, password: e.target.value })
+                    }
                     placeholder="••••••••"
                     className="pr-10"
                     autoComplete="current-password"
@@ -138,9 +145,9 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-primary hover:opacity-90" 
+              <Button
+                type="submit"
+                className="w-full bg-gradient-primary hover:opacity-90"
                 size="lg"
                 disabled={isLoading}
               >
@@ -165,7 +172,7 @@ const AdminLogin = () => {
                 <div className="text-sm text-orange-800">
                   <p className="font-semibold mb-1">Admin Access Only</p>
                   <p className="text-xs">
-                    This portal is restricted to authorized administrators. 
+                    This portal is restricted to authorized administrators.
                     Unauthorized access attempts are logged and monitored.
                   </p>
                 </div>
@@ -174,14 +181,11 @@ const AdminLogin = () => {
 
             {/* Links */}
             <div className="mt-6 space-y-2 text-center text-sm">
-              <Link 
-                to="/auth" 
-                className="block text-primary hover:underline"
-              >
+              <Link to="/auth" className="block text-primary hover:underline">
                 ← Regular Donor Login
               </Link>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="block text-muted-foreground hover:text-foreground"
               >
                 Back to Home

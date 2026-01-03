@@ -12,13 +12,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { collection, query, where, orderBy, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 const DonationHistory = () => {
   const { currentUser } = useAuth();
-  const [donations, setDonations] = useState<any[]>([]);
-  const [filteredDonations, setFilteredDonations] = useState<any[]>([]);
+  const [donations, setDonations] = useState([]);
+  const [filteredDonations, setFilteredDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -34,18 +40,22 @@ const DonationHistory = () => {
       orderBy("createdAt", "desc")
     );
 
-    const unsubscribe = onSnapshot(donationsQuery, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setDonations(data);
-      setFilteredDonations(data);
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching donations:", error);
-      setLoading(false);
-    });
+    const unsubscribe = onSnapshot(
+      donationsQuery,
+      (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setDonations(data);
+        setFilteredDonations(data);
+        setLoading(false);
+      },
+      (error) => {
+        console.error("Error fetching donations:", error);
+        setLoading(false);
+      }
+    );
 
     // Cleanup listener on unmount
     return () => unsubscribe();
@@ -60,22 +70,23 @@ const DonationHistory = () => {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(d =>
-        d.causeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        d.amount.toString().includes(searchTerm)
+      filtered = filtered.filter(
+        (d) =>
+          d.causeName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          d.amount.toString().includes(searchTerm)
       );
     }
 
     // Type filter
     if (filterType !== "all") {
-      filtered = filtered.filter(d =>
+      filtered = filtered.filter((d) =>
         filterType === "monthly" ? d.isMonthly : !d.isMonthly
       );
     }
 
     // Year filter
     if (filterYear !== "all") {
-      filtered = filtered.filter(d => {
+      filtered = filtered.filter((d) => {
         const year = d.createdAt?.toDate().getFullYear().toString();
         return year === filterYear;
       });
@@ -86,7 +97,7 @@ const DonationHistory = () => {
 
   const exportToCSV = () => {
     const headers = ["Date", "Amount", "Cause", "Type", "Status"];
-    const rows = filteredDonations.map(d => [
+    const rows = filteredDonations.map((d) => [
       d.createdAt?.toDate().toLocaleDateString(),
       `${d.amount} ETB`,
       d.causeName || "General",
@@ -96,20 +107,24 @@ const DonationHistory = () => {
 
     const csvContent = [
       headers.join(","),
-      ...rows.map(row => row.join(","))
+      ...rows.map((row) => row.join(",")),
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `donation-history-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `donation-history-${
+      new Date().toISOString().split("T")[0]
+    }.csv`;
     a.click();
   };
 
-  const years = Array.from(new Set(donations.map(d =>
-    d.createdAt?.toDate().getFullYear().toString()
-  ))).filter(Boolean);
+  const years = Array.from(
+    new Set(
+      donations.map((d) => d.createdAt?.toDate().getFullYear().toString())
+    )
+  ).filter(Boolean);
 
   if (loading) {
     return (
@@ -127,9 +142,14 @@ const DonationHistory = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Donation History</h1>
-            <p className="text-muted-foreground">View and export your donation records</p>
+            <p className="text-muted-foreground">
+              View and export your donation records
+            </p>
           </div>
-          <Button onClick={exportToCSV} disabled={filteredDonations.length === 0}>
+          <Button
+            onClick={exportToCSV}
+            disabled={filteredDonations.length === 0}
+          >
             <Download className="w-4 h-4 mr-2" />
             Export CSV
           </Button>
@@ -166,8 +186,10 @@ const DonationHistory = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Years</SelectItem>
-                  {years.map(year => (
-                    <SelectItem key={year} value={year}>{year}</SelectItem>
+                  {years.map((year) => (
+                    <SelectItem key={year} value={year}>
+                      {year}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -179,14 +201,17 @@ const DonationHistory = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              {filteredDonations.length} Donation{filteredDonations.length !== 1 ? 's' : ''}
+              {filteredDonations.length} Donation
+              {filteredDonations.length !== 1 ? "s" : ""}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {filteredDonations.length === 0 ? (
               <div className="text-center py-12">
                 <Filter className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <p className="text-lg text-muted-foreground">No donations found</p>
+                <p className="text-lg text-muted-foreground">
+                  No donations found
+                </p>
                 <p className="text-sm text-muted-foreground">
                   Try adjusting your filters
                 </p>
@@ -205,25 +230,31 @@ const DonationHistory = () => {
                   </thead>
                   <tbody>
                     {filteredDonations.map((donation) => (
-                      <tr key={donation.id} className="border-b hover:bg-muted/50">
+                      <tr
+                        key={donation.id}
+                        className="border-b hover:bg-muted/50"
+                      >
                         <td className="py-3 px-4">
                           {donation.createdAt?.toDate().toLocaleDateString()}
                         </td>
                         <td className="py-3 px-4 font-semibold">
                           {donation.amount} ETB
                         </td>
-                        <td className="py-3 px-4">{donation.causeName || "General"}</td>
+                        <td className="py-3 px-4">
+                          {donation.causeName || "General"}
+                        </td>
                         <td className="py-3 px-4">
                           {donation.isMonthly ? "Monthly" : "One-time"}
                         </td>
                         <td className="py-3 px-4">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs ${donation.status === "completed"
-                              ? "bg-green-100 text-green-800"
-                              : donation.status === "pending"
+                            className={`px-2 py-1 rounded-full text-xs ${
+                              donation.status === "completed"
+                                ? "bg-green-100 text-green-800"
+                                : donation.status === "pending"
                                 ? "bg-yellow-100 text-yellow-800"
                                 : "bg-red-100 text-red-800"
-                              }`}
+                            }`}
                           >
                             {donation.status}
                           </span>
@@ -241,7 +272,9 @@ const DonationHistory = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card>
             <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Total Donated</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                Total Donated
+              </p>
               <p className="text-2xl font-bold">
                 {filteredDonations.reduce((sum, d) => sum + d.amount, 0)} ETB
               </p>
@@ -250,18 +283,26 @@ const DonationHistory = () => {
 
           <Card>
             <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Total Donations</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                Total Donations
+              </p>
               <p className="text-2xl font-bold">{filteredDonations.length}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="pt-6">
-              <p className="text-sm text-muted-foreground mb-1">Average Donation</p>
+              <p className="text-sm text-muted-foreground mb-1">
+                Average Donation
+              </p>
               <p className="text-2xl font-bold">
                 {filteredDonations.length > 0
-                  ? Math.round(filteredDonations.reduce((sum, d) => sum + d.amount, 0) / filteredDonations.length)
-                  : 0} ETB
+                  ? Math.round(
+                      filteredDonations.reduce((sum, d) => sum + d.amount, 0) /
+                        filteredDonations.length
+                    )
+                  : 0}{" "}
+                ETB
               </p>
             </CardContent>
           </Card>
